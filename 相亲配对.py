@@ -3,6 +3,9 @@ import numpy as np
 from tkinter import *
 from collections import Counter
 
+# k-近邻算法中的K值
+K = 9
+
 # 创建出窗口
 window = Tk()
 window.title("相亲配对")
@@ -33,27 +36,29 @@ def show():
     with open('datingTestSet.txt') as info:
         for i in info.readlines():
             infos = i.split('\t')
-            date = np.array([float(infos[0]), float(infos[1]), float(infos[1])])
+            date = np.array([float(infos[0]), float(infos[1]), float(infos[2])])
             s = np.sqrt(np.sum(np.square(date-user_date)))
-            if len(k_j) < 10:
+            if len(k_j) < K:
                 k_j.append([infos[3], s])
             else:
+                k_j.sort(reverse=True, key=lambda x:x[1])
                 for j in k_j:
                     if s < j[1]:
                         k_j.remove(j)
                         k_j.append([infos[3], s])
                         break
     print(k_j)
-    text = []
+    text_date = []
     for k in k_j:
         if k[0][0] == "l":
-            text.append("哇！恭喜你，缘分到来了，你极有吸引力哦！好好发展吧！！")
+            text_date.append("largeDoses:哇！恭喜你，缘分到来了，你极有吸引力哦！好好发展吧！！")
         elif k[0][0] == "s":
-            text.append("哇！你有希望，虽然你的吸引力一般，但仍然是存在希望的！")
+            text_date.append("smallDoses:哇！你有希望，虽然你的吸引力一般，但仍然是存在希望的！")
         else:
-            text.append("额，不是你不够优秀，只是你选错了对象而已，换一个试试吧")
-    Label(window, text = Counter(text).most_common(1)[0][0][:12]).grid(row = 6, column = 0)
-    Label(window, text = Counter(text).most_common(1)[0][0][12:]).grid(row = 6, column = 1)
+            text_date.append("didntLike :额，不是你不够优秀，只是你选错了对象而已，换一个试试吧")
+    Label(window, text = Counter(text_date).most_common(1)[0][0][:10]).grid(row = 6, column = 0)
+    Label(window, text = Counter(text_date).most_common(1)[0][0][11:23]).grid(row = 7, column = 0)
+    Label(window, text = Counter(text_date).most_common(1)[0][0][23:]).grid(row = 7, column = 1)
 
 
 # 在窗口底部显示一个按键用于让用户提交，还有一个让用户退出的按键
